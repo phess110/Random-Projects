@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.PriorityQueue;
+import java.util.Comparator;
 
 public class Search{
 
@@ -6,141 +7,124 @@ public class Search{
 	private static final int[] sld = {366, 0, 160, 242, 161, 176, 77, 151, 226, 244, 241, 234, 380, 100, 193, 253, 329, 80, 199, 374};
 
 	static int h(Node n){
-		return sld[n.idx];
+		return sld[n.getIndex()];
 	}
 
-	static void solution(Node end, Node start){
-		//backtrack through search tree from end
+	static void solution(Tree end, Tree start){
+		if(end.equals(start)){
+			System.out.print(end.getCityName() + " ");
+		}
+		else{
+			solution(end.parent, start);
+			System.out.print(end.getCityName() + " ");
+		}
 	}
 
-	static void aStar(Graph g, Node start, Node end){
+	static void aStar(Node start, Node end){
 
-		Set<Node> frontierSet = new HashSet<Node>();
-		Comparator<Node> comparator = new MyComparator(); 
-		PriorityQueue<Node> frontier = new PriorityQueue<Node>(20, comparator);
-		
-		start.eval = h(start);
-		frontierSet.add(start);
-		frontier.add(start);
-		Node explore = start;
+		MySet<Tree> frontierSet = new MySet<Tree>();
+		Comparator<Tree> comparator = new MyComparator(); 
+		PriorityQueue<Tree> frontier = new PriorityQueue<Tree>(20, comparator);
+
+		Tree search = new Tree(null, start);
+
+		search.setEstTotal(h(start)); //heuristic
+		frontierSet.add(search);
+		frontier.add(search);
+
+		Tree explore = search;
 		int count = 0;
 
 		while(!frontierSet.isEmpty()){
 
-			count++;
 			explore = frontier.poll();
-			frontierSet.remove(explore);
-			explore.explored = true;
+			frontierSet.remove(explore.getCity());
 
-			if(explore == end){
-				System.out.println("Goal reached: cost = " + explore.g);
+			if(explore.getCity() == end){
+				System.out.println("Goal reached. Cost = " + explore.getTrueCost());
 				System.out.println("Nodes visited: " + count);
 				System.out.print("Solution: ");
 				break;
 			}
 
-			System.out.println("expand node: " + explore.name + " " + explore.eval);
+			count++;
+			System.out.println("expand node: " + explore.getCityName() + " " + explore.getEstTotal());
 
-			for(Edge e: explore.neighbors){
+			for(Edge e: explore.getCity().neighbors){
 
 				Node n = e.neighbor;
-				int path = e.distance + explore.g; //actual distance from start to node n
-				int f = path + h(n); //estimated shortest distance from start to end through n
+				int newTrueCost = e.distance + explore.getTrueCost(); //actual distance from start to node n
+				int newEstTotal = newTrueCost + h(n); //estimated shortest distance from start to end through n
 
 				if(frontierSet.contains(n)){
-					if(n.eval > f){
-						frontier.remove(n);
-						n.g = path;
-						n.eval = f;
-						n.parent = explore;
-						frontier.add(n);
-						System.out.println("\tupdating " + n.name + " : " + path + " " + h(n) + " " + f);
+					Tree child = frontierSet.remove(n);
+					if(child.getEstTotal() > newEstTotal){
+						frontier.remove(child);
+						child.setTrueCost(newTrueCost);
+						child.setEstTotal(newEstTotal);
+						child.parent = explore;
+						frontier.add(child);
+						frontierSet.add(child);
+						System.out.println("\tupdating " + child.getCityName() + " : " + newTrueCost + " " + h(n) + " " + newEstTotal);
 					}
 				}else{
-					n.g = path;
-					n.eval = f;
-					n.parent = explore;
-					frontier.add(n);
-					frontierSet.add(n);
-					n.parent = explore;
-					System.out.println("\tadded " + n.name + " : " + path + " " + h(n) + " " + f);
+					Tree child = new Tree(explore, n);
+					child.setTrueCost(newTrueCost);
+					child.setEstTotal(newEstTotal);
+					frontier.add(child);
+					frontierSet.add(child);
+					System.out.println("\tadded " + child.getCityName() + " : " + newTrueCost + " " + h(n) + " " + newEstTotal);
 				}
 			}
 		}
-		//solution(end, start);
+		solution(explore, search);
 	}
 
 	public static void main(String [] args){
-		Node[] nodes = new Node[20];
+		Node[] n = new Node[20];
 
 		String [] cities = {"Arad", "Bucharest", "Craiova", "Drobeta", "Eforie", "Fagaras", "Giurgiu", "Hirsova", "Iasi", "Lugoj", "Mehadia", "Neamt", "Oradea","Pitesti", "Rimnicu V.", "Sibiu","Timisoara", "Urziceni", "Vaslui", "Zerind"};
 
 		for(int i = 0; i < 20; i++){
-			nodes[i] = new Node(cities[i], i);
+			n[i] = new Node(cities[i], i);
 		}
 
-		nodes[0].addEdge(nodes[15], 140);
-		nodes[0].addEdge(nodes[16], 118);
-		nodes[0].addEdge(nodes[19], 75);
+		n[0].addEdge(n[15], 140);
+		n[0].addEdge(n[16], 118);
+		n[0].addEdge(n[19], 75);
 
-		nodes[1].addEdge(nodes[13], 101);
-		nodes[1].addEdge(nodes[17], 85);
-		nodes[1].addEdge(nodes[5], 211);
-		nodes[1].addEdge(nodes[6],90);
+		n[1].addEdge(n[13], 101);
+		n[1].addEdge(n[17], 85);
+		n[1].addEdge(n[5], 211);
+		n[1].addEdge(n[6],90);
 
-		nodes[2].addEdge(nodes[3],120);
-		nodes[2].addEdge(nodes[14],146);
-		nodes[2].addEdge(nodes[13],138);
+		n[2].addEdge(n[3],120);
+		n[2].addEdge(n[14],146);
+		n[2].addEdge(n[13],138);
 
-		nodes[3].addEdge(nodes[2],120);
-		nodes[3].addEdge(nodes[10],75);
+		n[3].addEdge(n[10],75);
 
-		nodes[4].addEdge(nodes[7],86);
+		n[4].addEdge(n[7],86);
 
-		nodes[5].addEdge(nodes[15],99);
-		nodes[5].addEdge(nodes[1],211);
+		n[5].addEdge(n[15],99);
 
-		nodes[6].addEdge(nodes[1],90);
+		n[7].addEdge(n[17],98);
 
-		nodes[7].addEdge(nodes[4],86);
-		nodes[7].addEdge(nodes[17],98);
+		n[8].addEdge(n[11],87);
+		n[8].addEdge(n[18],92);
 
-		nodes[8].addEdge(nodes[11],87);
-		nodes[8].addEdge(nodes[18],92);
+		n[9].addEdge(n[10],70);
+		n[9].addEdge(n[16],111);
 
-		nodes[9].addEdge(nodes[10],70);
-		nodes[9].addEdge(nodes[16],111);
+		n[12].addEdge(n[19],71);
+		n[12].addEdge(n[15],151);
 
-		nodes[10].addEdge(nodes[9],70);
-		nodes[10].addEdge(nodes[3],75);
+		n[13].addEdge(n[14],97);
 
-		nodes[11].addEdge(nodes[8],87);
-		nodes[12].addEdge(nodes[19],71);
-		nodes[12].addEdge(nodes[15],151);
+		n[14].addEdge(n[15],80);
 
-		nodes[13].addEdge(nodes[2],138);
-		nodes[13].addEdge(nodes[1],101);
-		nodes[13].addEdge(nodes[14],97);
+		n[17].addEdge(n[18],142);
 
-		nodes[14].addEdge(nodes[13],97);
-		nodes[14].addEdge(nodes[2],146);
-		nodes[14].addEdge(nodes[15],80);
-		nodes[15].addEdge(nodes[14],80);
-		nodes[15].addEdge(nodes[5],99);
-		nodes[15].addEdge(nodes[0],140);
-		nodes[15].addEdge(nodes[12],151);
-
-		nodes[16].addEdge(nodes[0],118);
-		nodes[16].addEdge(nodes[9],111);
-		nodes[17].addEdge(nodes[1],85);
-		nodes[17].addEdge(nodes[7],98);
-		nodes[17].addEdge(nodes[18],142);
-		nodes[18].addEdge(nodes[17],142);
-		nodes[18].addEdge(nodes[8],92);
-		nodes[19].addEdge(nodes[0],75);
-		nodes[19].addEdge(nodes[12],71);
-
-		Graph romania = new Graph(nodes);
-		aStar(romania, nodes[9], nodes[1]);
+		aStar(n[9], n[1]);
 	}
 }
