@@ -178,6 +178,7 @@ class BinomialHeap
 		if empty? 
 			@minNode = t
 			@maxRank = 0
+			@minRank = 0
 			@roots[0] = t
 		else
 			if(t < @minNode) #maintain minNode
