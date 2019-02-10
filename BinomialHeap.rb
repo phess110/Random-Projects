@@ -46,6 +46,7 @@ class BinomialHeap
 
 	# x and y are two binomial heaps
 	def heapUnion(x,y)
+		# TODO: add update for minRank, maxRank, minNode
 		heap = new BinomialHeap()
 		t1 = x.roots[0]
 		t2 = y.roots[0]
@@ -192,6 +193,7 @@ class BinomialHeap
 	# Note: every insertion returns the node which was inserted. We can then add the inserted node into a hash table.
 	# to decrease the key we hash the key/value to find the node and update.
 	def decreaseKey(x,k)
+		# TODO: add update for minNode, maxRank, minRank
 		if(k < x.key)
 			x.key = k
 			bubbleUp(x)
@@ -199,6 +201,7 @@ class BinomialHeap
 	end
 
 	def bubbleUp(x)
+		# TODO: add update for minNode, maxRank, minRank
 		while(x.p != $null)
 			if(x < x.p) #swap x and its parent 
 				t = x.l
@@ -230,6 +233,7 @@ class BinomialHeap
 
 	# returns and removes the minimum node in the binomial heap. Maintains heap properties.
 	def deleteMin
+		# TODO: add update for minNode, maxRank, minRank
 		x = getMin
 		child = x.c
 		while(child != $null) #for each child of x, add it to the heap
