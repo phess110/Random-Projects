@@ -3,7 +3,7 @@ class BinomialHeap
 	$null = new Node(0,0)
 
 	# this is a min-heap
-	# consists of a circularly linked root list of binomial trees sorted in order of increasing rank
+	# consists of an array of binomial trees sorted in order of increasing rank
 	def initialize
 		@minNode = $null # in root list
 		@roots = Array.new(10){$null}
