@@ -1,6 +1,7 @@
 # Random-Projects
 - **A*** Implementation of the A* graph search algorithm in Java for the Romania map problem (see Sec. 3 of Russell Norvig).  Main file is  Search.java. 
 - **Simulated Annealing** A local search algorithm for solving the n-queens problem. Simulated annealing is a variation on the hill-climbing algorithm whether "bad moves" are allowed with probability ![equation](https://latex.codecogs.com/svg.latex?e%5E%7B%5CDelta%20V/T%7D) where ![equation](https://latex.codecogs.com/svg.latex?%5CDelta%20V%20%3D%20%5Ctextsc%7BValue%7D%28%5Ctexttt%7Bcurr%7D%29%20-%20%5Ctextsc%7BValue%7D%28%5Ctexttt%7Bnext%7D%29) and ![equation](https://latex.codecogs.com/svg.latex?T) is a function of time that decreases monotonically to 0, hence bad moves are less likely to be chosen as time goes on.
+- **Aho Corasick** Given a dictionary of patterns, efficiently search for all occurrences of each pattern within a given search text. See pdf in Aho Corasick directory for details.
 - **graph.rb** Implements adjacency list representation of a graph in addition to several common graph algorithms: all-pairs shortest path (Floyd-Warshall), single-source shortest path (Bellman-Ford & Dijkstra), Max Flows (Floyd-Fulkerson/Edmond-Karp), DFS (include topological sort, connectivity and other algorithms that depend on DFS), BFS, Prims for MWST (unfinished). Utilizes binaryheap.rb. (Work in progress)
 - **BinaryHeap.rb** Array-based implementation of a binary heap.
 - **BinomialHeap.rb** Tree-based implementation of a binomial heap (WIP).
